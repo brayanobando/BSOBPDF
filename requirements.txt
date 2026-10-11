@@ -1,0 +1,14 @@
+# BSOBPDF — dependencias de Python (las instala INICIAR.bat)
+flask>=3.0
+waitress>=3.0
+pymupdf>=1.26.0
+pymupdf4llm>=0.2.0
+pdf2docx>=0.5.8
+python-pptx>=1.0
+openpyxl>=3.1
+pillow>=10.0
+deep-translator>=1.11
+qrcode>=7.4
+requests>=2.31
+playwright>=1.44
+pywin32>=306; sys_platform == "win32"

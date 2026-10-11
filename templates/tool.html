@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ tool.name }} | BSOBPDF{% endblock %}
+{% block description %}{{ tool.subtitle }}{% endblock %}
+{% block body_class %}page-tool ui-{{ tool.ui }}{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<div class="tool-page" id="app">
+
+  <!-- 1. Subir archivos -->
+  <section class="stage upload-stage" id="st-upload">
+    <span class="sheet lg cat-{{ tool.category }}">{{ icon(tool.icon) }}</span>
+    <h1>{{ tool.name }}</h1>
+    <p class="subtitle">{{ tool.subtitle }}</p>
+
+    <div class="upload-actions">
+      {% if tool.ui == 'html' %}
+      <form class="url-form" id="url-form">
+        <label class="sr-only" for="url-input">Dirección de la página web</label>
+        <input id="url-input" type="text" inputmode="url" placeholder="https://www.ejemplo.com" autocomplete="url">
+        <button class="btn btn-primary btn-xl" type="submit">Continuar</button>
+      </form>
+      <span class="or">o</span>
+      <button class="btn" type="button" data-pick>{{ icon('upload') }} Subir un archivo HTML</button>
+      {% else %}
+      <button class="btn btn-primary btn-xl" type="button" data-pick>{{ icon('upload', 'ico') }}
+        {% if tool.accept == '.pdf' %}Seleccionar {{ 'archivos' if tool.multiple else 'archivo' }} PDF
+        {% elif tool.key in ('jpg-to-pdf', 'scan') %}Seleccionar imágenes
+        {% elif tool.key == 'word-to-pdf' %}Seleccionar documentos de Word
+        {% elif tool.key == 'ppt-to-pdf' %}Seleccionar presentaciones
+        {% elif tool.key == 'excel-to-pdf' %}Seleccionar hojas de cálculo
+        {% else %}Seleccionar archivos{% endif %}
+      </button>
+      <span class="or">o {{ 'arrástralos' if tool.multiple else 'arrástralo' }} aquí</span>
+      {% endif %}
+    </div>
+
+    <div class="engine-note" id="engine-note" hidden>{{ icon('info') }}<div></div></div>
+
+    <ol class="tool-howto">
+      <li><span class="step-n">1</span><b>Elige tus archivos</b><p>Desde tu computador o arrastrándolos a esta página.</p></li>
+      <li><span class="step-n">2</span><b>Ajusta las opciones</b><p>Revisa la vista previa y elige cómo quieres el resultado.</p></li>
+      <li><span class="step-n">3</span><b>Descarga</b><p>El archivo se procesa en este equipo. Puedes seguir con otra herramienta.</p></li>
+    </ol>
+  </section>
+
+  <!-- 2. Espacio de trabajo (lo arma tool.js según la herramienta) -->
+  <section class="stage" id="st-work" hidden></section>
+
+  <!-- 3. Procesando -->
+  <section class="stage processing-stage" id="st-proc" hidden>
+    <div>
+      <div class="paper-feed" aria-hidden="true"><span></span><span></span><span></span></div>
+      <h2 id="proc-title">Subiendo archivos…</h2>
+      <p id="proc-sub">No cierres esta pestaña.</p>
+      <div class="progress" id="proc-bar"><div></div></div>
+    </div>
+  </section>
+
+  <!-- 4. Resultado -->
+  <section class="stage result-stage" id="st-result" hidden></section>
+
+  <input type="file" id="file-input" accept="{{ tool.accept }}" {{ 'multiple' if tool.multiple or tool.ui in ('compare', 'organize', 'scan') }} hidden>
+</div>
+<div class="drop-overlay" id="drop-overlay" hidden><div>{{ icon('upload') }}<p>Suelta tus archivos</p></div></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.TOOL = {{ tool_json | tojson }};
+  window.NEXT_TOOLS = {{ next_tools | tojson }};
+  window.ENGINE = {
+    office: {{ (engines_status.office if engines_status else true) | tojson }},
+    ocr: {{ (engines_status.ocr if engines_status else true) | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='vendor/pdfjs/pdf.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/options.js') }}?v={{ VERSION }}"></script>
+<script src="{{ url_for('static', filename='js/tool.js') }}?v={{ VERSION }}"></script>
+{% if tool.ui == 'editor' %}<script src="{{ url_for('static', filename='js/editor.js') }}?v={{ VERSION }}"></script>{% endif %}
+{% if tool.ui == 'scan' %}<script src="{{ url_for('static', filename='js/scan.js') }}?v={{ VERSION }}"></script>{% endif %}
+{% endblock %}

@@ -1,0 +1,6 @@
+* text=auto
+# Los .bat deben conservar los saltos de línea de Windows (CRLF)
+*.bat -text
+*.sh text eol=lf
+*.png binary
+*.woff2 binary

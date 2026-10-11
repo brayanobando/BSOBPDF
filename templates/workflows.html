@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Flujos de trabajo | BSOBPDF{% endblock %}
+{% block content %}
+<div class="wrap">
+  <header class="page-head">
+    <h1>Flujos de trabajo</h1>
+    <p>Encadena varias herramientas y aplícalas de una vez a tus PDF. Por ejemplo: unir, numerar las páginas, comprimir y proteger con contraseña. Tus flujos se guardan en este navegador.</p>
+  </header>
+  <div class="wf-layout">
+    <section class="panel" aria-labelledby="wf-saved-h">
+      <h2 id="wf-saved-h">Mis flujos</h2>
+      <div class="wf-saved" id="wf-saved"></div>
+      <button class="btn btn-sm" type="button" id="wf-new" style="margin-top:12px;width:100%">{{ icon('plus') }} Nuevo flujo</button>
+      <h2 style="margin-top:24px">Plantillas</h2>
+      <div class="wf-saved" id="wf-templates"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="wf-edit-h">
+      <h2 id="wf-edit-h" class="sr-only">Pasos del flujo</h2>
+      <div class="field" style="margin-bottom:16px">
+        <label for="wf-name">Nombre del flujo</label>
+        <input class="input" id="wf-name" type="text" placeholder="Por ejemplo: Enviar a la universidad">
+      </div>
+      <div class="wf-steps" id="wf-steps"></div>
+      <div class="field" style="margin-top:18px">
+        <div class="field-label">Agregar un paso</div>
+        <div class="wf-add" id="wf-add"></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">
+        <button class="btn" type="button" id="wf-save">{{ icon('check') }} Guardar flujo</button>
+        <button class="btn btn-ghost btn-danger" type="button" id="wf-delete">{{ icon('trash-2') }} Borrar</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="wf-run-h">
+      <h2 id="wf-run-h">Ejecutar</h2>
+      <div id="wf-run"></div>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>window.WF_TOOLS = {{ wf_tools | tojson }};</script>
+<script src="{{ url_for('static', filename='js/options.js') }}?v={{ VERSION }}"></script>
+<script src="{{ url_for('static', filename='js/workflows.js') }}?v={{ VERSION }}"></script>
+{% endblock %}

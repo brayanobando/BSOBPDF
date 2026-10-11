@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}BSOBPDF: todas tus herramientas PDF en tu computador{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Todo lo que haces con un PDF, sin salir de tu equipo.</h1>
+      <p class="lead">Une, divide, comprime, convierte, firma, censura y traduce. {{ TOOLS|length }} herramientas gratuitas que procesan tus archivos aquí mismo, no en un servidor ajeno.</p>
+      <div class="hero-facts">
+        <span>{{ icon('shield-check') }} Tus archivos no salen de tu computador</span>
+        <span>{{ icon('workflow') }} Encadena herramientas en flujos</span>
+        <span>{{ icon('sparkles') }} IA local con Ollama</span>
+      </div>
+    </div>
+    <div class="dropsheet" id="dropsheet" tabindex="0" role="button" aria-describedby="ds-desc">
+      <div class="ds-stack" aria-hidden="true">
+        <span class="sheet sm cat-organizar">{{ icon('combine') }}</span>
+        <span class="sheet sm cat-convertir">{{ icon('file-type') }}</span>
+        <span class="sheet sm cat-seguridad">{{ icon('signature') }}</span>
+      </div>
+      <h2>Suelta un archivo aquí</h2>
+      <p id="ds-desc">Te mostramos qué puedes hacer con él: PDF, Word, Excel, PowerPoint, imágenes o HTML.</p>
+      <div class="ds-results" id="ds-results" hidden></div>
+      <p class="ds-hint">o haz clic para elegirlo</p>
+      <input type="file" id="ds-input" hidden>
+    </div>
+  </div>
+</section>
+
+<section class="tools-section">
+  <div class="wrap">
+    <div class="filters" role="toolbar" aria-label="Filtrar herramientas">
+      <button class="chip" type="button" data-filter="todas" aria-pressed="true">Todas <span class="count">{{ TOOLS|length }}</span></button>
+      {% for c in CATEGORIES %}
+      <button class="chip" type="button" data-filter="{{ c.id }}" aria-pressed="false" style="--c:{{ c.color }}"><span class="dot"></span>{{ c.name }} <span class="count">{{ TOOLS|selectattr('category','equalto',c.id)|list|length }}</span></button>
+      {% endfor %}
+      <a class="chip" href="{{ url_for('workflows_page') }}">{{ icon('workflow') }} Flujos de trabajo</a>
+    </div>
+
+    <div class="tool-grid" id="tool-grid">
+      {% for t in TOOLS %}
+      <a class="tool-card cat-{{ t.category }}" href="{{ url_for('tool_page', slug=t.slug) }}" data-cat="{{ t.category }}">
+        <span class="sheet cat-{{ t.category }}">{{ icon(t.icon) }}</span>
+        <div>
+          <h3>{{ t.name }}</h3>
+          <p style="margin-top:6px">{{ t.card }}</p>
+        </div>
+        {% if t.badge %}<span class="badge">{{ t.badge }}</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+
+    <div class="workflow-banner">
+      <div class="wf-flow" aria-hidden="true">
+        <span class="sheet cat-organizar">{{ icon('combine') }}</span><span class="sep"></span>
+        <span class="sheet cat-optimizar">{{ icon('minimize-2') }}</span><span class="sep"></span>
+        <span class="sheet cat-seguridad">{{ icon('lock') }}</span>
+      </div>
+      <div>
+        <h2>Haz en un clic lo que repites cada semana</h2>
+        <p>Crea un flujo de trabajo, por ejemplo unir, comprimir, numerar y proteger, y aplícalo a tus archivos de una sola vez.</p>
+      </div>
+      <a class="btn btn-primary" href="{{ url_for('workflows_page') }}">Crear un flujo</a>
+    </div>
+  </div>
+</section>
+
+<section class="local-section">
+  <div class="wrap local-grid">
+    <div>
+      <h3>Privado por diseño</h3>
+      <p>Todo se procesa en este computador. Los archivos temporales se borran solos y nada se sube a internet, salvo la traducción en línea si la eliges.</p>
+    </div>
+    <div>
+      <h3>Funciona sin conexión</h3>
+      <p>Unir, comprimir, convertir, firmar, censurar o aplicar OCR no necesita internet. Ideal para oficinas o colegios con mala señal.</p>
+    </div>
+    <div>
+      <h3>Desde tu celular</h3>
+      <p>Abre BSOBPDF desde el celular en la misma red Wi‑Fi para escanear documentos con la cámara y enviarlos a este equipo.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.TOOL_INDEX = {{ TOOLS | map(attribute='slug') | list | tojson }};
+  window.TOOL_META = {
+    {% for t in TOOLS %}"{{ t.slug }}": {name: {{ t.name|tojson }}, accept: {{ t.accept|tojson }}, cat: "{{ t.category }}", icon: "{{ t.icon }}", min: {{ t.min_files }}}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/index.js') }}?v={{ VERSION }}"></script>
+{% endblock %}

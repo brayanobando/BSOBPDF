@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Página no encontrada | BSOBPDF{% endblock %}
+{% block content %}
+<div class="notfound">
+  <span class="sheet lg" style="margin:0 auto 20px">{{ icon('file-x-2') }}</span>
+  <h1>Esta página no existe</h1>
+  <p>Puede que la dirección esté mal escrita. Todas las herramientas están en la página principal.</p>
+  <a class="btn btn-primary" href="{{ url_for('index') }}">Ver todas las herramientas</a>
+</div>
+{% endblock %}

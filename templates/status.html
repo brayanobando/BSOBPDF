@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Estado del sistema | BSOBPDF{% endblock %}
+{% block content %}
+<div class="wrap">
+  <header class="page-head">
+    <h1>Estado del sistema</h1>
+    <p>La mayoría de herramientas solo necesitan Python. Algunas usan programas gratuitos que puedes instalar cuando los necesites; aquí ves cuáles están listos en este equipo.</p>
+  </header>
+
+  <div class="status-grid">
+    <article class="status-card">
+      <h2>{{ icon('cpu') }} Motor PDF <span class="state ok">{{ icon('circle-check') }} Listo</span></h2>
+      <p class="detail">{{ st.pymupdf.detail }} · Python {{ python }}</p>
+      <p class="tools-using">Unir, dividir, comprimir, rotar, numerar, marca de agua, recortar, editar, firmar, censurar, comparar, proteger, desbloquear, formularios, PDF a JPG/Word/PowerPoint/Excel/Markdown y más.</p>
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('file-text') }} Office a PDF
+        {% if st.office.ok %}<span class="state ok">{{ icon('circle-check') }} Listo</span>{% else %}<span class="state no">{{ icon('triangle-alert') }} Falta</span>{% endif %}</h2>
+      <p class="detail">{{ st.office.detail }}</p>
+      <p class="tools-using">Para Word a PDF, PowerPoint a PDF y Excel a PDF.</p>
+      {% if not st.office.ok %}
+      <ol>
+        <li>Descarga LibreOffice (gratis) desde <a href="https://es.libreoffice.org/descarga/" target="_blank" rel="noopener">es.libreoffice.org/descarga</a> e instálalo con las opciones por defecto.</li>
+        <li>O, si tienes Microsoft Office, BSOBPDF lo usará automáticamente.</li>
+        <li>Cierra y vuelve a abrir BSOBPDF.</li>
+      </ol>
+      {% endif %}
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('scan-text') }} OCR (reconocer texto)
+        {% if st.ocr.ok %}<span class="state ok">{{ icon('circle-check') }} Listo</span>{% else %}<span class="state no">{{ icon('triangle-alert') }} Falta</span>{% endif %}</h2>
+      <p class="detail">{{ st.ocr.detail }}</p>
+      <p class="tools-using">Para OCR PDF y para leer escaneos en PDF a Markdown.</p>
+      {% if not st.ocr.ok or 'spa' not in st.ocr.langs %}
+      <ol>
+        <li>Descarga el instalador de Tesseract para Windows desde <a href="https://github.com/UB-Mannheim/tesseract/wiki" target="_blank" rel="noopener">github.com/UB-Mannheim/tesseract/wiki</a>.</li>
+        <li>Durante la instalación, en «Additional language data», marca <b>Spanish</b>.</li>
+        <li>Déjalo en la carpeta por defecto (<code>C:\Program Files\Tesseract-OCR</code>) y reinicia BSOBPDF.</li>
+      </ol>
+      {% endif %}
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('archive') }} PDF/A certificado
+        {% if st.pdfa.strict %}<span class="state ok">{{ icon('circle-check') }} Listo</span>{% else %}<span class="state no">{{ icon('info') }} Modo básico</span>{% endif %}</h2>
+      <p class="detail">{{ st.pdfa.detail }}</p>
+      <p class="tools-using">PDF a PDF/A funciona siempre. Con Ghostscript el resultado cumple la norma de forma estricta (fuentes incrustadas, colores convertidos).</p>
+      {% if not st.pdfa.strict %}
+      <ol><li>Instala Ghostscript (64 bits) desde <a href="https://ghostscript.com/releases/gsdnld.html" target="_blank" rel="noopener">ghostscript.com</a> y reinicia BSOBPDF.</li></ol>
+      {% endif %}
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('globe') }} HTML a PDF <span class="state ok">{{ icon('circle-check') }} Listo</span></h2>
+      <p class="detail">{{ st.html.detail }}</p>
+      <p class="tools-using">Usa Microsoft Edge o Chrome (ya vienen en Windows) para que la página quede igual que en la web.</p>
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('sparkles') }} IA local (Ollama)
+        {% if st.ollama.ok %}<span class="state ok">{{ icon('circle-check') }} Listo</span>{% else %}<span class="state no">{{ icon('triangle-alert') }} No disponible</span>{% endif %}</h2>
+      <p class="detail">{{ st.ollama.detail }}</p>
+      <p class="tools-using">Para Resumir con IA y Traducir PDF sin internet. Sin Ollama, el resumen usa el modo sin IA y la traducción usa el servicio en línea.</p>
+      {% if not st.ollama.ok %}
+      <ol>
+        <li>Instala Ollama desde <a href="https://ollama.com/download" target="_blank" rel="noopener">ollama.com/download</a>.</li>
+        <li>Descarga un modelo: <code>ollama pull qwen3:4b</code> (o <code>qwen2.5:3b</code> si tu equipo tiene poca memoria).</li>
+        <li>Deja Ollama abierto y recarga esta página.</li>
+      </ol>
+      {% elif st.ollama.default %}
+      <p class="detail">Modelo por defecto: {{ st.ollama.default }}</p>
+      {% endif %}
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('smartphone') }} Acceso desde el celular</h2>
+      <p>En la misma red Wi‑Fi, abre en el celular: <b>{{ lan }}</b></p>
+      <p class="tools-using">Si no carga, permite «Python» en el Firewall de Windows para redes privadas.</p>
+    </article>
+
+    <article class="status-card">
+      <h2>{{ icon('folder-open') }} Archivos temporales</h2>
+      <p class="detail">{{ work }}</p>
+      <p class="tools-using">Cada proceso usa su propia carpeta, que se borra sola a las 3 horas.</p>
+    </article>
+  </div>
+</div>
+{% endblock %}

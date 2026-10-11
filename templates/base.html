@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BSOBPDF{% endblock %}</title>
+  <meta name="description" content="{% block description %}Todas las herramientas para trabajar con PDF, funcionando en tu propio computador.{% endblock %}">
+  <link rel="icon" href="{{ url_for('static', filename='img/logo.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v={{ VERSION }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<a class="sr-only" href="#contenido">Saltar al contenido</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="{{ url_for('index') }}" aria-label="BSOBPDF, inicio">
+      <svg class="brand-mark" viewBox="0 0 30 36" aria-hidden="true">
+        <path d="M4 0h17l9 9v23a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V4a4 4 0 0 1 4-4z" fill="#0b6b55"/>
+        <path d="M21 0l9 9h-6a3 3 0 0 1-3-3z" fill="#5fae96"/>
+        <rect x="5" y="19" width="16" height="5" rx="1.5" fill="#ffe14d"/>
+        <rect x="5" y="27" width="11" height="2.6" rx="1.3" fill="#fff" opacity=".85"/>
+        <rect x="5" y="13" width="12" height="2.6" rx="1.3" fill="#fff" opacity=".85"/>
+      </svg>
+      <span class="brand-name">BSOB<span>PDF</span></span>
+    </a>
+    <nav class="main-nav" id="main-nav" aria-label="Principal">
+      <button class="nav-trigger" type="button" aria-expanded="false" aria-controls="mega" id="mega-btn">
+        Todas las herramientas {{ icon('chevron-down') }}
+      </button>
+      <a href="{{ url_for('tool_page', slug='unir-pdf') }}">Unir</a>
+      <a href="{{ url_for('tool_page', slug='comprimir-pdf') }}">Comprimir</a>
+      <a href="{{ url_for('tool_page', slug='pdf-a-word') }}">PDF a Word</a>
+      <a href="{{ url_for('tool_page', slug='firmar-pdf') }}">Firmar</a>
+      <a href="{{ url_for('workflows_page') }}">Flujos de trabajo</a>
+    </nav>
+    <div class="nav-right">
+      <a class="local-pill" href="{{ url_for('status_page') }}" title="Ver qué motores están instalados">{{ icon('laptop') }} Funciona en tu equipo</a>
+      <button class="btn btn-ghost btn-icon menu-btn" type="button" aria-label="Abrir menú" aria-controls="main-nav" aria-expanded="false" id="menu-btn">{{ icon('menu') }}</button>
+    </div>
+  </div>
+  <div class="mega" id="mega" hidden>
+    <div class="wrap">
+      {% for c in CATEGORIES %}
+      <section>
+        <h3>{{ c.name }}</h3>
+        <ul>
+          {% for t in TOOLS if t.category == c.id %}
+          <li><a href="{{ url_for('tool_page', slug=t.slug) }}"><span class="sheet cat-{{ t.category }}">{{ icon(t.icon) }}</span>{{ t.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
+</header>
+
+<main id="contenido">
+{% block content %}{% endblock %}
+</main>
+
+{% block footer %}
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <a class="brand" href="{{ url_for('index') }}"><span class="brand-name">BSOB<span>PDF</span></span></a>
+      <p style="margin-top:10px;max-width:36ch">Herramientas PDF que corren en tu computador. Tus archivos se procesan aquí y se borran solos al cabo de unas horas.</p>
+    </div>
+    {% for group in [CATEGORIES[:2], CATEGORIES[2:4], CATEGORIES[4:]] %}
+    <div>
+      {% for c in group %}
+      <h4 {% if not loop.first %}style="margin-top:18px"{% endif %}>{{ c.name }}</h4>
+      <ul>
+        {% for t in TOOLS if t.category == c.id %}{% if loop.index <= 4 %}<li><a href="{{ url_for('tool_page', slug=t.slug) }}">{{ t.name }}</a></li>{% endif %}{% endfor %}
+      </ul>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <div class="legal">
+      <span>BSOBPDF {{ VERSION }}, creado por Brayan Stiven Obando</span>
+      <span>Software libre (AGPL-3.0). <a href="https://github.com/brayanobando/BSOBPDF" target="_blank" rel="noopener">Código fuente</a>. <a href="{{ url_for('status_page') }}">Estado del sistema</a></span>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+<div class="toast-zone" id="toasts" role="status" aria-live="polite"></div>
+<script>
+  window.BSOB = {
+    static: "{{ url_for('static', filename='') }}",
+    icons: {{ icons_json | tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='js/core.js') }}?v={{ VERSION }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
