@@ -187,8 +187,8 @@ Todas las demás herramientas (más de 25) funcionan solo con Python. Dentro de 
 
 ### Opción 1: descargar el ZIP (la más fácil)
 
-1. En esta página, haz clic en el botón verde **`<> Code`** y luego en **Download ZIP**.
-   También puedes ir a la sección [**Releases**](../../releases) y descargar la última versión.
+1. En esta página, haz clic en el botón verde **`<> Code`** y luego en **Download ZIP**
+   (o usa este enlace directo: [descargar BSOBPDF en ZIP](https://github.com/brayanobando/BSOBPDF/archive/refs/heads/main.zip)).
 2. Descomprime el ZIP en una carpeta de tu computador, por ejemplo `Documentos\BSOBPDF`.
    **Importante:** no lo ejecutes desde dentro del ZIP; primero extrae todos los archivos (clic derecho → «Extraer todo»).
 
