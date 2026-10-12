@@ -120,11 +120,12 @@ def browser_path() -> str | None:
     if env and os.path.isfile(env):
         return env
     if IS_WIN:
+        # Primero Edge (viene con Windows), luego Chrome y Brave, en cualquier carpeta de programas
         cands = []
-        for d in _pf_dirs():
-            cands += [os.path.join(d, "Microsoft", "Edge", "Application", "msedge.exe"),
-                      os.path.join(d, "Google", "Chrome", "Application", "chrome.exe"),
-                      os.path.join(d, "BraveSoftware", "Brave-Browser", "Application", "brave.exe")]
+        for rel in (("Microsoft", "Edge", "Application", "msedge.exe"),
+                    ("Google", "Chrome", "Application", "chrome.exe"),
+                    ("BraveSoftware", "Brave-Browser", "Application", "brave.exe")):
+            cands += [os.path.join(d, *rel) for d in _pf_dirs()]
         return _first_existing(cands)
     for name in ("chromium", "chromium-browser", "google-chrome", "google-chrome-stable", "microsoft-edge", "msedge"):
         p = shutil.which(name)

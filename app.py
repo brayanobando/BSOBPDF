@@ -35,7 +35,7 @@ from core.utils import InputFile, ToolError, human_size, safe_stem, unique_path,
 from core.workflow import run_workflow  # noqa: E402
 
 BASE = Path(__file__).resolve().parent
-VERSION = "1.0"
+VERSION = "1.0.0"
 PORT = int(os.environ.get("BSOBPDF_PORT", "5000"))
 HOST = os.environ.get("BSOBPDF_HOST", "0.0.0.0")
 

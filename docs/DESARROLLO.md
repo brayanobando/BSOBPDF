@@ -14,7 +14,8 @@ Esta guía explica cómo está construido BSOBPDF, cómo agregar herramientas nu
 8. [Referencia de la API](#referencia-de-la-api)
 9. [Motores externos](#motores-externos)
 10. [Pruebas](#pruebas)
-11. [Convenciones](#convenciones)
+11. [Compilar el instalador de Windows](#compilar-el-instalador-de-windows)
+12. [Convenciones](#convenciones)
 
 ---
 
@@ -265,6 +266,33 @@ pytest -q
 `tests/test_herramientas.py` genera PDF, imágenes y formularios de ejemplo al vuelo y ejecuta cada herramienta a través de la API. Las pruebas de Office y OCR se saltan solas si falta el programa.
 
 Para probar la interfaz a mano, carga PDF reales con páginas giradas, formularios, contraseñas y escaneos: son los casos que más diferencias producen.
+
+---
+
+## Compilar el instalador de Windows
+
+El programa de escritorio tiene tres piezas:
+
+| Archivo | Qué hace |
+|---|---|
+| `escritorio.py` | Punto de entrada del `.exe`. Arranca Waitress en segundo plano, abre BSOBPDF en una ventana de Edge o Chrome en modo aplicación (`--app`, con su propio perfil en `%LOCALAPPDATA%\BSOBPDF\ventana`) y termina cuando se cierra la ventana. Si ya hay una instancia abierta, solo abre otra ventana. Escribe su registro en `%LOCALAPPDATA%\BSOBPDF\bsobpdf.log`. |
+| `empaquetado/BSOBPDF.spec` | Receta de PyInstaller: incluye `templates/`, `static/` y los datos de PyMuPDF, PyMuPDF4LLM, pdf2docx, python-docx, python-pptx y onnxruntime. Excluye Playwright (en el programa instalado, HTML a PDF usa Edge directamente). |
+| `empaquetado/BSOBPDF.iss` | Instalador de Inno Setup en español: instalación por usuario sin permisos de administrador, accesos directos, licencia y desinstalador. |
+
+**Compilación automática.** El flujo `.github/workflows/instalador-windows.yml` se ejecuta en Windows cada vez que cambia el código en `main`: instala las dependencias, compila con PyInstaller, ejecuta `BSOBPDF.exe --prueba` (19 herramientas y las páginas principales), crea el instalador, lo instala en silencio, prueba el programa instalado y lo desinstala. El instalador queda como artefacto en la pestaña **Actions**. Cuando publicas una versión en **Releases** (por ejemplo `v1.1.0`), el mismo flujo adjunta `BSOBPDF-Setup-1.1.0.exe` a esa versión.
+
+**Compilación manual en tu PC con Windows:**
+
+```powershell
+pip install -r requirements.txt pyinstaller
+pyinstaller --noconfirm --clean empaquetado/BSOBPDF.spec      # crea dist\BSOBPDF\BSOBPDF.exe
+dist\BSOBPDF\BSOBPDF.exe --prueba=prueba.txt; type prueba.txt  # prueba rápida
+# Instala Inno Setup 6 (https://jrsoftware.org/isinfo.php) y luego:
+& "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" /DAppVersion=1.0.0 empaquetado\BSOBPDF.iss
+# Resultado: dist\BSOBPDF-Setup-1.0.0.exe
+```
+
+Para publicar una versión nueva: cambia `VERSION` en `app.py` (y `empaquetado/version_info.txt`), sube los cambios y crea la versión en Releases con la etiqueta `vX.Y.Z`.
 
 ---
 

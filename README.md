@@ -163,11 +163,11 @@ Crea secuencias de herramientas, guárdalas y aplícalas a varios archivos de un
 | Requisito | Detalle |
 |---|---|
 | **Sistema operativo** | Windows 10 u 11 (recomendado, tiene instalador de un clic). También funciona en Linux y macOS. |
-| **Python 3.9 a 3.13** | Se recomienda **Python 3.12**. Descárgalo de [python.org/downloads](https://www.python.org/downloads/). |
+| **Python 3.9 a 3.13** | **Solo si no usas el instalador.** Se recomienda **Python 3.12**. Descárgalo de [python.org/downloads](https://www.python.org/downloads/). |
 | **Navegador** | Microsoft Edge, Google Chrome, Firefox o similar, actualizado. |
-| **Espacio en disco** | Unos **700 MB** para los componentes de Python que se instalan la primera vez. |
+| **Espacio en disco** | Unos **500 MB** con el instalador, o **700 MB** si lo instalas desde el código. |
 | **Memoria RAM** | 4 GB funcionan; 8 GB recomendados si vas a usar OCR o IA local. |
-| **Internet** | Solo la primera vez, para instalar los componentes. Después funciona sin conexión. |
+| **Internet** | Solo para descargarlo (y, sin instalador, para instalar los componentes la primera vez). Después funciona sin conexión. |
 
 ### Opcional (solo para algunas herramientas)
 
@@ -185,14 +185,18 @@ Todas las demás herramientas (más de 25) funcionan solo con Python. Dentro de 
 
 ## Cómo descargarlo
 
-### Opción 1: descargar el ZIP (la más fácil)
+### Opción 1: el instalador para Windows (la más fácil)
+
+Ve a la sección [**Releases**](https://github.com/brayanobando/BSOBPDF/releases/latest) y descarga el archivo **`BSOBPDF-Setup-x.y.z.exe`**. Es un instalador normal de Windows: no necesitas instalar Python ni nada más.
+
+### Opción 2: el código en ZIP (Windows, Linux o macOS)
 
 1. En esta página, haz clic en el botón verde **`<> Code`** y luego en **Download ZIP**
    (o usa este enlace directo: [descargar BSOBPDF en ZIP](https://github.com/brayanobando/BSOBPDF/archive/refs/heads/main.zip)).
 2. Descomprime el ZIP en una carpeta de tu computador, por ejemplo `Documentos\BSOBPDF`.
    **Importante:** no lo ejecutes desde dentro del ZIP; primero extrae todos los archivos (clic derecho → «Extraer todo»).
 
-### Opción 2: con Git
+### Opción 3: con Git
 
 ```bash
 git clone https://github.com/brayanobando/BSOBPDF.git
@@ -205,7 +209,20 @@ Para actualizar más adelante: `git pull`.
 
 ## Cómo instalarlo y abrirlo
 
-### En Windows (recomendado)
+### Con el instalador de Windows (recomendado)
+
+1. Abre **`BSOBPDF-Setup-x.y.z.exe`**.
+   Como el instalador no tiene firma digital de una empresa, Windows puede mostrar «Windows protegió su PC»: pulsa **Más información → Ejecutar de todas formas**.
+2. Sigue el asistente (está en español): acepta la licencia, elige si quieres un ícono en el escritorio y pulsa **Instalar**.
+   Por defecto se instala solo para tu usuario y **no pide permisos de administrador**.
+3. Abre **BSOBPDF** desde el menú Inicio o el escritorio. Se abre en **su propia ventana**, como cualquier programa.
+4. La primera vez, si el Firewall de Windows pregunta por BSOBPDF, pulsa **Permitir** en redes privadas (solo hace falta para escanear con el celular).
+
+**Para cerrarlo**, cierra su ventana. **Para desinstalarlo**, ve a Configuración → Aplicaciones → BSOBPDF → Desinstalar.
+
+> El programa usa Microsoft Edge (incluido en Windows) para mostrar su ventana. Si no lo encuentra, abre BSOBPDF en tu navegador predeterminado y muestra una pequeña ventana para cerrarlo.
+
+### Desde el código en Windows (sin instalador)
 
 **1. Instala Python (solo la primera vez).**
 Descarga Python 3.12 desde [python.org/downloads](https://www.python.org/downloads/). Al abrir el instalador, **marca la casilla «Add python.exe to PATH»** antes de pulsar «Install Now». Si ya tienes Python 3.9 o superior, salta este paso.
@@ -406,6 +423,18 @@ BSOBPDF se configura con variables de entorno. En Windows puedes agregarlas al p
 ## Solución de problemas
 
 <details>
+<summary><b>Windows dice «Windows protegió su PC» o el antivirus bloquea el instalador</b></summary>
+
+El instalador es de código abierto pero no está firmado con un certificado comercial, por eso SmartScreen avisa. Pulsa **Más información → Ejecutar de todas formas**. Si tu antivirus lo bloquea, puedes revisar que el archivo venga de la página oficial de [Releases](https://github.com/brayanobando/BSOBPDF/releases) o instalar desde el código con `INICIAR.bat`.
+</details>
+
+<details>
+<summary><b>El programa instalado no abre</b></summary>
+
+Revisa el registro en `%LOCALAPPDATA%\BSOBPDF\bsobpdf.log`. Si el problema continúa, desinstálalo, vuelve a instalarlo y abre un [issue](https://github.com/brayanobando/BSOBPDF/issues) con el contenido de ese archivo.
+</details>
+
+<details>
 <summary><b>«No se encontró Python» al abrir INICIAR.bat</b></summary>
 
 Instala Python desde [python.org](https://www.python.org/downloads/) marcando **«Add python.exe to PATH»**. Si ya lo instalaste sin esa casilla, ejecuta de nuevo el instalador, elige «Modify» y activa «Add Python to environment variables». Si Windows abre la Microsoft Store al escribir `python`, desactiva los alias en Configuración → Aplicaciones → Configuración avanzada de aplicaciones → Alias de ejecución de aplicaciones.
@@ -498,9 +527,10 @@ flowchart LR
 
 ```
 BSOBPDF/
-├── INICIAR.bat             Instalador y arranque para Windows (doble clic)
+├── INICIAR.bat             Arranque desde el código en Windows (doble clic)
 ├── iniciar.sh              Lo mismo para Linux y macOS
 ├── app.py                  Servidor web: páginas, API y descargas
+├── escritorio.py           Versión de escritorio: ventana propia, sin consola (la usa el instalador)
 ├── requirements.txt        Componentes de Python
 ├── core/
 │   ├── registry.py         Catálogo: nombre, textos, archivos aceptados, opciones y función de cada herramienta
@@ -521,6 +551,8 @@ BSOBPDF/
 │   ├── fonts/              Tipografías incluidas (funciona sin internet)
 │   ├── icons/              Iconos Lucide
 │   └── vendor/pdfjs/       PDF.js
+├── empaquetado/            Receta de PyInstaller, ícono e instalador de Inno Setup
+├── .github/workflows/      Compilación automática del instalador en Windows
 ├── tests/                  Pruebas automáticas (pytest)
 └── docs/                   Guía para desarrolladores y capturas
 ```
@@ -541,6 +573,7 @@ BSOBPDF/
 
 - Firma digital con certificado (.p12 / .pfx).
 - Imagen de Docker para instalar en servidores.
+- Instalador firmado digitalmente para evitar el aviso de SmartScreen.
 - Modo oscuro.
 - Interfaz en otros idiomas.
 - Cola de trabajos para varios usuarios simultáneos.
