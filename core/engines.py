@@ -174,7 +174,8 @@ def run(cmd: list[str], timeout: int = 300, cwd: str | None = None) -> subproces
     kw = {}
     if IS_WIN:
         kw["creationflags"] = 0x08000000  # CREATE_NO_WINDOW
-    return subprocess.run(cmd, capture_output=True, timeout=timeout, cwd=cwd, **kw)
+    # stdin=DEVNULL evita «identificador no válido» cuando el programa corre sin consola (instalador)
+    return subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True, timeout=timeout, cwd=cwd, **kw)
 
 
 def status() -> dict:

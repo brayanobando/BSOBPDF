@@ -273,6 +273,11 @@ def download(jid, name):
     return send_file(p, as_attachment=not inline, download_name=p.name)
 
 
+@app.get("/api/ping")
+def ping():
+    return jsonify(app="bsobpdf", version=VERSION)
+
+
 @app.get("/api/estado")
 def status_api():
     return jsonify(engines.status())
